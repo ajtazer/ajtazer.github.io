@@ -1,4 +1,185 @@
----
-layout: home
-# Index page
----
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAZER | Launcher</title>
+    <link rel="icon" href="favicon_io/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="favicon_io/site.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0e0e0e;
+            --btn-bg: #161616;
+            --btn-hover: #1c1c1c;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --accent-glow: rgba(255, 255, 255, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            padding: 2rem;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .subtext {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-transform: lowercase;
+        }
+
+        .launcher {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            padding: 1.5rem 2rem;
+            background-color: var(--btn-bg);
+            border-radius: 16px;
+            text-decoration: none;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            background-color: var(--btn-hover);
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 40px var(--accent-glow);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-title {
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .btn-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 400;
+        }
+
+        /* Subtle indicator for interactive elements */
+        .btn::after {
+            content: '→';
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: var(--transition);
+            color: var(--text-secondary);
+        }
+
+        .btn:hover::after {
+            opacity: 1;
+            right: 1.5rem;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .btn {
+                padding: 1.25rem 1.5rem;
+            }
+
+            .launcher {
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>TAZER</h1>
+        <p class="subtext">builder • experiments • internet things</p>
+    </header>
+
+    <main class="launcher">
+        <a href="https://ajtazer.github.io/FekoYaha/" class="btn">
+            <span class="btn-title">FekoYaha</span>
+            <span class="btn-subtitle">Persistent chat room experiment</span>
+        </a>
+
+        <a href="#" class="btn" style="opacity: 0.6; cursor: default;" onclick="return false;">
+            <span class="btn-title">Experiments</span>
+            <span class="btn-subtitle">Coming soon</span>
+        </a>
+
+        <a href="https://github.com/ajtazer" target="_blank" rel="noopener noreferrer" class="btn">
+            <span class="btn-title">GitHub</span>
+            <span class="btn-subtitle">Source code and contributions</span>
+        </a>
+    </main>
+</body>
+
+</html>
