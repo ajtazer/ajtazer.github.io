@@ -40,7 +40,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             padding: 2rem;
             opacity: 0;
             animation: fadeIn 0.8s ease-out forwards;
@@ -60,7 +60,7 @@
 
         header {
             text-align: center;
-            margin-bottom: 3.5rem;
+            margin-bottom: 2.5rem;
         }
 
         h1 {
@@ -81,17 +81,23 @@
 
         .launcher {
             width: 100%;
-            max-width: 420px;
+            max-width: 600px;
             display: flex;
             flex-direction: column;
             gap: 1rem;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.85rem;
         }
 
         .btn {
             display: flex;
             flex-direction: column;
             width: 100%;
-            padding: 1.5rem 2rem;
+            padding: 1.15rem 1.3rem;
             background-color: var(--btn-bg);
             border-radius: 16px;
             text-decoration: none;
@@ -114,32 +120,16 @@
 
         .btn-title {
             color: var(--text-primary);
-            font-size: 1.25rem;
+            font-size: 1.05rem;
             font-weight: 600;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
         }
 
         .btn-subtitle {
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-weight: 400;
-        }
-
-        /* Subtle indicator for interactive elements */
-        .btn::after {
-            content: '→';
-            position: absolute;
-            right: 2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0;
-            transition: var(--transition);
-            color: var(--text-secondary);
-        }
-
-        .btn:hover::after {
-            opacity: 1;
-            right: 1.5rem;
+            line-height: 1.4;
         }
 
         .social-grid {
@@ -184,12 +174,13 @@
                 font-size: 2.5rem;
             }
 
-            .btn {
-                padding: 1.25rem 1.5rem;
-            }
-
             .launcher {
                 gap: 0.75rem;
+                max-width: 420px;
+            }
+
+            .project-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -202,45 +193,37 @@
     </header>
 
     <main class="launcher">
-        <a href="https://ajtazer.github.io/FekoYaha/" class="btn">
-            <span class="btn-title">FekoYaha</span>
-            <span class="btn-subtitle">Persistent chat room experiment</span>
-        </a>
+        <div class="project-grid">
+            <a href="https://bihari.xyz/docker-cp-copyout-sibling-escape/" class="btn">
+                <span class="btn-title">Docker cp Escape</span>
+                <span class="btn-subtitle">Container escape via a docker cp race</span>
+            </a>
 
-        <a href="https://github.com/ajtazer/WPCall" class="btn">
-            <span class="btn-title">WPCall</span>
-            <span class="btn-subtitle">Make calls from WhatsApp Web. No desktop app required.</span>
-        </a>
+            <a href="https://github.com/ajtazer/CVE-2025-51471-POC" class="btn">
+                <span class="btn-title">CVE-2025-51471</span>
+                <span class="btn-subtitle">Proof-of-concept exploit</span>
+            </a>
 
-        <a href="https://github.com/ajtazer/CVE-2025-51471-POC" class="btn">
-            <span class="btn-title">CVE-2025-51471-POC</span>
-            <span class="btn-subtitle">Proof-of-concept exploit demonstrating responsible vulnerability research</span>
-        </a>
+            <a href="https://huggingface.co/spaces/ajtazer/manga-brainrot" class="btn">
+                <span class="btn-title">MangaBrainRot</span>
+                <span class="btn-subtitle">Manga to brainrot, live demo</span>
+            </a>
 
-        <a href="https://bihari.xyz/docker-cp-copyout-sibling-escape/" class="btn">
-            <span class="btn-title">Docker cp Escape</span>
-            <span class="btn-subtitle">Container-escape PoC — a docker cp copy-out race writes outside the destination directory</span>
-        </a>
+            <a href="https://ajtazer.github.io/FekoYaha/" class="btn">
+                <span class="btn-title">FekoYaha</span>
+                <span class="btn-subtitle">Persistent chat rooms</span>
+            </a>
 
-        <a href="https://github.com/ajtazer/1win-h1-findings" class="btn">
-            <span class="btn-title">1win OAuth CSRF Chain</span>
-            <span class="btn-subtitle">HackerOne bug bounty research — a chained OAuth CSRF account-takeover</span>
-        </a>
+            <a href="#" class="btn" style="opacity: 0.6; cursor: default;" onclick="return false;">
+                <span class="btn-title">Experiments</span>
+                <span class="btn-subtitle">Security &amp; systems prototypes</span>
+            </a>
 
-        <a href="https://huggingface.co/spaces/ajtazer/manga-brainrot" class="btn">
-            <span class="btn-title">MangaBrainRot</span>
-            <span class="btn-subtitle">Turns manga into brainrot reels — live demo on Hugging Face</span>
-        </a>
-
-        <a href="#" class="btn" style="opacity: 0.6; cursor: default;" onclick="return false;">
-            <span class="btn-title">Experiments</span>
-            <span class="btn-subtitle">Security & systems prototypes (selectively published)</span>
-        </a>
-
-        <a href="/pgp/" class="btn">
-            <span class="btn-title">PGP</span>
-            <span class="btn-subtitle">Reach me securely — encrypt your message to my public key</span>
-        </a>
+            <a href="/pgp/" class="btn">
+                <span class="btn-title">PGP</span>
+                <span class="btn-subtitle">Reach me over encrypted mail</span>
+            </a>
+        </div>
 
         <div class="social-grid">
             <a href="https://www.linkedin.com/in/tazer/" target="_blank" rel="noopener noreferrer" class="social-btn"
