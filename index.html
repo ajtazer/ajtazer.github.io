@@ -4,7 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>wby?</title>
+    <title>tazerOS — TAZER</title>
+    <meta name="description" content="Anuj Rawat (TAZER) — security researcher. An interactive terminal portfolio. CVEs, PoCs, tools. Anime & Linux.">
+    <meta name="author" content="Anuj Rawat">
+    <meta property="og:title" content="tazerOS — TAZER">
+    <meta property="og:description" content="An interactive terminal portfolio. Security research, CVEs, PoCs, and a pile of tools. Type 'help'.">
+    <meta name="theme-color" content="#05070a">
     <link rel="icon" href="favicon_io/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
@@ -12,248 +17,575 @@
     <link rel="manifest" href="favicon_io/site.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0e0e0e;
-            --btn-bg: #161616;
-            --btn-hover: #1c1c1c;
-            --text-primary: #ffffff;
-            --text-secondary: #888888;
-            --accent-glow: rgba(255, 255, 255, 0.05);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg: #05070a;
+            --panel: rgba(12, 16, 20, 0.72);
+            --fg: #cfe9df;
+            --dim: #5f7168;
+            --green: #5ffba3;
+            --cyan: #7fdfff;
+            --pink: #ff6ea9;
+            --sakura: #ffb7d5;
+            --purple: #c9a2ff;
+            --amber: #ffcf5c;
+            --red: #ff5f6e;
+            --border: rgba(127, 223, 255, 0.14);
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            --glow: 0 0 6px rgba(95, 251, 163, 0.25);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html, body { height: 100%; }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-            padding: 2rem;
-            opacity: 0;
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            letter-spacing: -0.05em;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-        }
-
-        .subtext {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            font-weight: 400;
-            letter-spacing: 0.1em;
-            text-transform: lowercase;
-        }
-
-        .launcher {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.85rem;
-        }
-
-        .btn {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            padding: 1.15rem 1.3rem;
-            background-color: var(--btn-bg);
-            border-radius: 16px;
-            text-decoration: none;
-            transition: var(--transition);
-            border: 1px solid transparent;
-            position: relative;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--mono);
+            font-size: 15px;
+            line-height: 1.55;
             overflow: hidden;
+            position: relative;
         }
 
-        .btn:hover {
-            background-color: var(--btn-hover);
-            transform: scale(1.02);
-            border-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 40px var(--accent-glow);
+        /* background radial + matrix canvas */
+        #matrix { position: fixed; inset: 0; z-index: 0; opacity: 0; transition: opacity 0.6s; pointer-events: none; }
+        #matrix.on { opacity: 0.5; }
+        body::before {
+            content: "";
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background:
+                radial-gradient(1000px 600px at 50% -10%, rgba(201, 162, 255, 0.12), transparent 60%),
+                radial-gradient(820px 520px at 100% 110%, rgba(255, 183, 213, 0.10), transparent 60%),
+                radial-gradient(700px 480px at 0% 60%, rgba(127, 223, 255, 0.07), transparent 60%);
         }
 
-        .btn:active {
-            transform: scale(0.98);
+        /* sakura petals */
+        #sakura { position: fixed; inset: 0; z-index: 40; pointer-events: none; overflow: hidden; }
+        .petal {
+            position: absolute; top: -24px;
+            width: 12px; height: 12px;
+            background: radial-gradient(circle at 30% 30%, #ffd6e7, var(--sakura));
+            border-radius: 12px 1px 12px 1px;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 4px rgba(255, 183, 213, 0.6));
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0%   { transform: translateX(0) translateY(-24px) rotate(0deg); opacity: 0; }
+            8%   { opacity: 0.85; }
+            100% { transform: translateX(var(--drift, 60px)) translateY(105vh) rotate(540deg); opacity: 0.2; }
         }
 
-        .btn-title {
-            color: var(--text-primary);
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin-bottom: 0.2rem;
+        /* CRT scanlines + flicker + vignette */
+        .crt {
+            position: fixed; inset: 0; z-index: 50; pointer-events: none;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 0px,
+                rgba(0, 0, 0, 0) 2px,
+                rgba(0, 0, 0, 0.16) 3px,
+                rgba(0, 0, 0, 0.16) 4px
+            );
+            mix-blend-mode: multiply;
+        }
+        .crt::after {
+            content: "";
+            position: absolute; inset: 0;
+            box-shadow: inset 0 0 160px rgba(0, 0, 0, 0.9);
+            animation: flicker 4.5s infinite steps(60);
+        }
+        @keyframes flicker { 0%,100% { opacity: 1; } 3% { opacity: 0.94; } 6% { opacity: 1; } 77% { opacity: 0.97; } 80% { opacity: 1; } }
+
+        /* screen layout */
+        .screen {
+            position: relative; z-index: 10;
+            height: 100%;
+            display: flex; flex-direction: column;
+            max-width: 940px;
+            margin: 0 auto;
         }
 
-        .btn-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            font-weight: 400;
-            line-height: 1.4;
+        .titlebar {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--panel);
+            backdrop-filter: blur(6px);
+            font-size: 0.76rem; color: var(--dim);
+            flex-shrink: 0;
+        }
+        .dots { display: flex; gap: 0.4rem; }
+        .dots i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+        .dots .r { background: #ff5f56; } .dots .y { background: #ffbd2e; } .dots .g { background: #27c93f; }
+        .titlebar .ttl { color: var(--fg); }
+        .titlebar .hint { margin-left: auto; color: var(--dim); }
+        .titlebar .hint b { color: var(--cyan); }
+
+        .term {
+            flex: 1; overflow-y: auto;
+            padding: 1.2rem 1.2rem 0.4rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(127,223,255,0.25) transparent;
+        }
+        .term::-webkit-scrollbar { width: 8px; }
+        .term::-webkit-scrollbar-thumb { background: rgba(127,223,255,0.2); border-radius: 4px; }
+
+        .term, .term a { text-shadow: var(--glow); }
+
+        .line { white-space: pre-wrap; word-break: break-word; }
+        .b { color: var(--fg); }
+        .green { color: var(--green); } .cyan { color: var(--cyan); } .pink { color: var(--pink); }
+        .amber { color: var(--amber); } .red { color: var(--red); } .dim { color: var(--dim); }
+        .ascii { color: var(--cyan); line-height: 1.08; font-size: clamp(0.5rem, 2.1vw, 0.86rem); text-shadow: 0 0 10px rgba(127,223,255,0.4); }
+
+        a { color: var(--green); text-decoration: none; border-bottom: 1px dotted rgba(95,251,163,0.4); }
+        a:hover { color: var(--cyan); border-bottom-color: var(--cyan); }
+        a.plain { border: none; }
+
+        .cmd-echo .prompt { color: var(--green); }
+        .cmd-echo .path { color: var(--cyan); }
+        .cmd-echo .sep { color: var(--dim); }
+
+        /* project rows */
+        .prow { display: grid; grid-template-columns: 12.5rem 1fr; gap: 0 1rem; padding: 0.1rem 0; }
+        .prow .pn a { color: var(--cyan); border: none; font-weight: 500; }
+        .prow .pn a:hover { color: var(--green); text-shadow: 0 0 8px rgba(95,251,163,0.6); }
+        .prow .pd { color: var(--dim); }
+        .prow .pd .t { color: var(--pink); }
+        @media (max-width: 620px) { .prow { grid-template-columns: 1fr; gap: 0; } .prow .pd { margin: 0 0 0.4rem; padding-left: 1.2rem; } }
+
+        /* input line */
+        .inputline {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.1rem 0 1rem;
+        }
+        .inputline .ps1 { color: var(--green); flex-shrink: 0; }
+        .inputline .ps1 .path { color: var(--cyan); }
+        .inputline .ps1 .sep { color: var(--dim); }
+        #cmd {
+            flex: 1; background: transparent; border: none; outline: none;
+            color: var(--fg); font-family: var(--mono); font-size: 15px;
+            caret-color: var(--green); text-shadow: var(--glow);
         }
 
-        .social-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            width: 100%;
+        /* quick chips */
+        .chips {
+            display: flex; flex-wrap: wrap; gap: 0.45rem;
+            padding: 0.7rem 1.2rem 1rem;
+            border-top: 1px solid var(--border);
+            background: var(--panel);
+            backdrop-filter: blur(6px);
+            flex-shrink: 0;
         }
-
-        .social-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            background-color: var(--btn-bg);
-            border-radius: 16px;
-            transition: var(--transition);
-            border: 1px solid transparent;
+        .chip {
+            font-family: var(--mono); font-size: 0.78rem;
+            color: var(--cyan); background: rgba(127,223,255,0.05);
+            border: 1px solid var(--border); border-radius: 7px;
+            padding: 0.32rem 0.7rem; cursor: pointer; transition: all 0.18s;
+            white-space: nowrap;
         }
+        .chip:hover { background: rgba(127,223,255,0.14); color: var(--green); border-color: rgba(95,251,163,0.4); transform: translateY(-1px); }
+        .chip.hot { color: var(--pink); border-color: rgba(255,110,169,0.35); }
+        .chip.hot:hover { color: #fff; background: rgba(255,110,169,0.18); }
 
-        .social-btn:hover {
-            background-color: var(--btn-hover);
-            transform: translateY(-4px);
-            border-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px var(--accent-glow);
-        }
+        .cursor-blk { display: inline-block; width: 9px; height: 1.05em; background: var(--green); vertical-align: text-bottom; animation: blink 1.05s steps(1) infinite; box-shadow: 0 0 8px var(--green); }
+        @keyframes blink { 50% { opacity: 0; } }
 
-        .social-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--text-secondary);
-            transition: var(--transition);
-        }
+        @media (max-width: 620px) { body { font-size: 13px; } #cmd { font-size: 13px; } .term { padding: 0.9rem 0.9rem 0.4rem; } }
 
-        .social-btn:hover svg {
-            fill: var(--text-primary);
-            transform: scale(1.1);
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-
-            .launcher {
-                gap: 0.75rem;
-                max-width: 420px;
-            }
-
-            .project-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (prefers-reduced-motion: reduce) {
+            .crt::after { animation: none; }
+            .cursor-blk { animation: none; }
+            #sakura { display: none; }
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <h1>TAZER</h1>
-        <p class="subtext">security • anime • masti</p>
-    </header>
+    <canvas id="matrix"></canvas>
+    <div id="sakura" aria-hidden="true"></div>
+    <div class="crt"></div>
 
-    <main class="launcher">
-        <div class="project-grid">
-            <a href="https://bihari.xyz/docker-cp-copyout-sibling-escape/" class="btn">
-                <span class="btn-title">Docker cp Escape</span>
-                <span class="btn-subtitle">Container escape via a docker cp race</span>
-            </a>
-
-            <a href="https://github.com/ajtazer/CVE-2025-51471-POC" class="btn">
-                <span class="btn-title">CVE-2025-51471</span>
-                <span class="btn-subtitle">Proof-of-concept exploit</span>
-            </a>
-
-            <a href="https://call.bihari.xyz/" class="btn">
-                <span class="btn-title">WP-Call</span>
-                <span class="btn-subtitle">VideoCall from WhatsappWeb</span>
-            </a>
-
-            <a href="https://feko.bihari.xyz/" class="btn">
-                <span class="btn-title">FekoYaha</span>
-                <span class="btn-subtitle">Cool ahh chat rooms</span>
-            </a>
-
-            <a href="https://s.bihari.xyz/" class="btn">
-                <span class="btn-title">Chota-Link</span>
-                <span class="btn-subtitle">Minimal short-link tool for quick sharing</span>
-            </a>
-
-            <a href="https://dump.bihari.xyz/" class="btn">
-                <span class="btn-title">Cürl Dump ٩(◕‿◕)۶</span>
-                <span class="btn-subtitle">Simple file sharing for command line warriors! ヽ(⌐■_■)ノ♪♬</span>
-            </a>
-
-            <a href="/pgp/" class="btn">
-                <span class="btn-title">PGP</span>
-                <span class="btn-subtitle">Reach me over encrypted mail</span>
-            </a>
+    <div class="screen">
+        <div class="titlebar">
+            <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
+            <span class="ttl">tazer@bihari: ~/portfolio — zsh <span style="color:var(--sakura)">タゼル ♥</span></span>
+            <span class="hint">type <b>help</b> · or tap a chip ↓</span>
         </div>
 
-        <div class="social-grid">
-            <a href="https://www.linkedin.com/in/tazer/" target="_blank" rel="noopener noreferrer" class="social-btn"
-                aria-label="LinkedIn">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                </svg>
-            </a>
-            <a href="https://www.instagram.com/anujrawatazer/" target="_blank" rel="noopener noreferrer"
-                class="social-btn" aria-label="Instagram">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.054 1.805.249 2.227.412.558.217.957.477 1.376.896.419.419.679.818.896 1.376.163.422.358 1.057.412 2.227.059 1.266.071 1.646.071 4.85s-.012 3.584-.07 4.85c-.054 1.17-.249 1.805-.412 2.227-.217.558-.477.957-.896 1.376-.419.419-.818.679-1.376.896-.422.163-1.057.358-2.227.412-1.266.059-1.646.071-4.85.071s-3.584-.012-4.85-.07c-1.17-.054-1.805-.249-2.227-.412-.558-.217-.957-.477-1.376-.896-.419-.419-.679-.818-.896-1.376-.163-.422-.358-1.057-.412-2.227-.059-1.266-.071-1.646-.071-4.85s.012-3.584.07-4.85c.054-1.17.249-1.805.412-2.227.217-.558.477-.957.896-1.376.419-.419.818-.679 1.376-.896.422-.163 1.057-.358 2.227-.412 1.266-.059 1.646-.071 4.85-.071zm0-2.163c-3.259 0-3.667.014-4.947.072-1.277.057-2.148.258-2.911.555-.788.305-1.457.712-2.124 1.379-.667.667-1.074 1.336-1.379 2.124-.297.763-.498 1.634-.555 2.911-.058 1.28-.072 1.688-.072 4.947s.014 3.667.072 4.947c.057 1.277.258 2.148.555 2.911.305.788.712 1.457 1.379 2.124.667.667 1.336 1.074 2.124 1.379.763.297 1.634.498 2.911.555 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.277-.057 2.148-.258 2.911-.555.788-.305 1.457-.712 2.124-1.379.667-.667 1.074-1.336 1.379-2.124.297-.763.498-1.634.555-2.911.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.057-1.277-.258-2.148-.555-2.911-.305-.788-.712-1.457-1.379-2.124-.667-.667-1.336-1.074-2.124-1.379-.763-.297-1.634-.498-2.911-.555-1.28-.058-1.688-.072-4.947-.072zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                </svg>
-            </a>
-            <a href="https://github.com/ajtazer" target="_blank" rel="noopener noreferrer" class="social-btn"
-                aria-label="GitHub">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                </svg>
-            </a>
+        <div class="term" id="term" role="log" aria-live="polite">
+            <div id="output"></div>
+            <div class="inputline" id="inputline" style="display:none">
+                <span class="ps1"><span class="path">tazer@bihari</span><span class="sep">:</span><span class="pink">~</span><span class="sep">$</span></span>
+                <input id="cmd" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="terminal input">
+            </div>
         </div>
-    </main>
+
+        <div class="chips" id="chips">
+            <button class="chip" data-cmd="help">help</button>
+            <button class="chip" data-cmd="about">about</button>
+            <button class="chip" data-cmd="projects">projects</button>
+            <button class="chip" data-cmd="security">security</button>
+            <button class="chip" data-cmd="anime">anime</button>
+            <button class="chip" data-cmd="contact">contact</button>
+            <button class="chip" data-cmd="sakura">sakura</button>
+            <button class="chip" data-cmd="matrix">matrix</button>
+            <button class="chip hot" data-cmd="sudo hire-me">sudo hire-me</button>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        "use strict";
+        var output = document.getElementById('output');
+        var term = document.getElementById('term');
+        var inputline = document.getElementById('inputline');
+        var cmd = document.getElementById('cmd');
+        var chips = document.getElementById('chips');
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+        function scroll() { term.scrollTop = term.scrollHeight; }
+        function print(html) { var d = document.createElement('div'); d.className = 'line'; d.innerHTML = html; output.appendChild(d); scroll(); return d; }
+        function blank() { print('&nbsp;'); }
+
+        // ---------- data ----------
+        var ASCII =
+'  ████████╗ █████╗ ███████╗███████╗██████╗ \n' +
+'  ╚══██╔══╝██╔══██╗╚══███╔╝██╔════╝██╔══██╗\n' +
+'     ██║   ███████║  ███╔╝ █████╗  ██████╔╝\n' +
+'     ██║   ██╔══██║ ███╔╝  ██╔══╝  ██╔══██╗\n' +
+'     ██║   ██║  ██║███████╗███████╗██║  ██║\n' +
+'     ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝';
+
+        var LINK = function (url, label) { return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + esc(label || url) + '</a>'; };
+
+        var PROJECTS = {
+            security: [
+                ['heckit', 'https://github.com/ajtazer/heckit', 'hacking buddy for AI coding agents — 291 offensive-sec skills', 'source'],
+                ['ZAP-MCP', 'https://github.com/ajtazer/ZAP-MCP', 'MCP bridge so an AI can drive OWASP ZAP scans', '★23'],
+                ['CVE-2025-51471', 'https://github.com/ajtazer/CVE-2025-51471-POC', 'Ollama cross-domain auth-token exposure — PoC', 'CVE'],
+                ['docker-cp-escape', 'https://bihari.xyz/docker-cp-copyout-sibling-escape/', 'container escapes a docker cp copy-out race', 'writeup'],
+                ['php857-cooked', 'https://github.com/ajtazer/php857-cookie-cooked', 'PHP 8.5.7 StreamBucket → SOAP RCE (repub. w/ permission)', 'RCE'],
+                ['Shipd-CTF', 'https://github.com/ajtazer/Shipd-CTF-Chals', 'vuln-by-design CTF challenges w/ graders', 'CTF']
+            ],
+            tools: [
+                ['curl-dump', 'https://dump.bihari.xyz/', 'curl a file up, wget it down — ephemeral, cloudflare', 'live'],
+                ['wp-call', 'https://call.bihari.xyz/', 'video calls straight from WhatsApp Web', 'live ★3'],
+                ['fekoyaha', 'https://feko.bihari.xyz/', 'instant no-signup chat + image rooms on the edge', 'live'],
+                ['chota-link', 'https://s.bihari.xyz/', 'minimal, fast link shortener on cloudflare', 'live'],
+                ['5g-finder', 'https://5g.bihari.xyz/', 'live 5G/4G signal strength over ADB, no root', 'live'],
+                ['tazerchat', 'https://tazerchat.vercel.app/', 'tlk.io but the chats persist', 'live']
+            ],
+            fun: [
+                ['bhaat', 'https://github.com/ajtazer/bhaat', 'my desktop rice — starship, spicetify, ccstatusline', 'dotfiles'],
+                ['mangabrainrot', 'https://github.com/ajtazer/MangaBrainRot', 'MangaDex chapters → IG Reels w/ AI thumbnails', 'anime'],
+                ['god-assist', 'https://github.com/ajtazer/god-assist', 'a claude-code plugin that narrates your agent', 'plugin']
+            ]
+        };
+
+        function projectBlock(list) {
+            var h = '';
+            list.forEach(function (p) {
+                h += '<div class="prow"><span class="pn">' + LINK(p[1], p[0]) +
+                     '</span><span class="pd">' + esc(p[2]) + ' <span class="t">[' + esc(p[3]) + ']</span></span></div>';
+            });
+            return h;
+        }
+
+        // ---------- commands ----------
+        var COMMANDS = {
+            help: function () {
+                print('<span class="green">available commands</span>');
+                var rows = [
+                    ['about', 'who is tazer'],
+                    ['neofetch', 'system info + splash'],
+                    ['projects', "what i've shipped   (alias: ls)"],
+                    ['security', 'cves &amp; exploit pocs'],
+                    ['anime', 'the other obsession'],
+                    ['contact', 'reach me   (alias: socials)'],
+                    ['resume', 'sudo hire-me'],
+                    ['sakura', 'toggle the petals 🌸'],
+                    ['matrix', 'toggle the katakana rain'],
+                    ['clear', 'wipe the screen'],
+                    ['banner', 'reprint the logo']
+                ];
+                rows.forEach(function (r) {
+                    print('  <span class="cyan">' + r[0] + '</span>' + ' '.repeat(Math.max(1, 12 - r[0].length)) + '<span class="dim">' + r[1] + '</span>');
+                });
+                print('<span class="dim">tip: click a chip below, or type. ↑/↓ = history, tab = autocomplete.</span>');
+            },
+            about: function () {
+                print("<span class='cyan'>Anuj Rawat</span> <span class='dim'>a.k.a</span> <span class='green'>TAZER</span> <span class='dim'>— security researcher, India.</span>");
+                blank();
+                print("I break things and then write up how. I hunt bugs, publish PoCs and the");
+                print("occasional CVE, and ship an unreasonable number of small tools between");
+                print("engagements. Off the clock: <span class='pink'>anime</span>, terminal <span class='cyan'>ricing</span>, and masti.");
+                blank();
+                print("<span class='dim'>keywords:</span> offensive security · web · cloud · container escapes · ADB · MCP");
+            },
+            neofetch: function () {
+                print('<span class="ascii">' + ASCII + '</span>');
+                print("<span class='sakura'>          ＼(＾▽＾)／  konnichiwa~  ·  security • anime • masti</span>");
+                blank();
+                var info = [
+                    ['tazer', '@bihari.xyz', true],
+                    ['role', 'offensive security · ethical hacker'],
+                    ['os', "macOS, <span class='cyan'>riced like it's Arch</span>"],
+                    ['shell', 'zsh + starship → ' + LINK('https://github.com/ajtazer/bhaat', 'bhaat')],
+                    ['weapons', 'burp · zap · ghidra · a lot of curl'],
+                    ['writing', 'CVEs · PoCs · sibling-dir escapes'],
+                    ['anime', 'yes. a concerning amount.'],
+                    ['since', '2004']
+                ];
+                info.forEach(function (r) {
+                    if (r[2]) { print('<span class="green">' + r[0] + '</span><span class="dim">' + r[1] + '</span>'); print('<span class="dim">──────────────────────────</span>'); return; }
+                    print('<span class="pink">' + r[0] + '</span>' + ' '.repeat(Math.max(1, 9 - r[0].length)) + '<span class="b">' + r[1] + '</span>');
+                });
+            },
+            projects: function () {
+                print('<span class="green"># security &amp; PoCs</span>'); print(projectBlock(PROJECTS.security));
+                blank();
+                print('<span class="green"># tools &amp; apps</span>'); print(projectBlock(PROJECTS.tools));
+                blank();
+                print('<span class="green"># anime &amp; rice</span>'); print(projectBlock(PROJECTS.fun));
+                blank();
+                print('<span class="dim">more at</span> ' + LINK('https://github.com/ajtazer', 'github.com/ajtazer'));
+            },
+            security: function () {
+                print('<span class="green"># exploit dev, PoCs &amp; research</span>');
+                print(projectBlock(PROJECTS.security));
+                blank();
+                print("<span class='dim'>disclosure-friendly. reports welcome over</span> " + LINK('/pgp/', 'PGP') + '.');
+            },
+            anime: function () {
+                print('<span class="pink">アニメ // the other obsession.</span>');
+                blank();
+                print("<span class='sakura'>(づ｡◕‿‿◕｡)づ</span>  enrolled at <span class='cyan'>Koudo Ikusei Senior High School</span> (iykyk).");
+                print("6 years deep on MyAnimeList, perpetually \"watching this season\".");
+                blank();
+                print("<span class='dim'>vibes:</span> psychological · slice-of-life · anything with a</span> <span class='pink'>menace-to-society protagonist</span>");
+                print("<span class='dim'>list  →</span> " + LINK('https://myanimelist.net/profile/ajtazer', 'myanimelist.net/profile/ajtazer'));
+                blank();
+                print("<span class='dim'>psst — type</span> <span class='cyan'>matrix</span> <span class='dim'>for katakana rain, or</span> <span class='sakura'>sakura</span> <span class='dim'>for petals.</span>");
+            },
+            sakura: function () {
+                var el = document.getElementById('sakura');
+                if (el.style.display === 'none') { el.style.display = ''; print("<span class='sakura'>🌸 sakura: falling.</span>"); }
+                else { el.style.display = 'none'; print("<span class='dim'>sakura: cleared. run</span> <span class='sakura'>sakura</span> <span class='dim'>to bring them back.</span>"); }
+            },
+            uwu: function () { print("<span class='sakura'>(⁄ ⁄•⁄ω⁄•⁄ ⁄)  n-nani?! this isn't a dating sim, senpai.</span>"); },
+            waifu: function () { COMMANDS.uwu(); },
+            contact: function () {
+                var rows = [
+                    ['github', 'https://github.com/ajtazer', 'github.com/ajtazer'],
+                    ['linkedin', 'https://www.linkedin.com/in/tazer/', 'linkedin.com/in/tazer'],
+                    ['instagram', 'https://www.instagram.com/anujrawatazer/', '@anujrawatazer'],
+                    ['myanimelist', 'https://myanimelist.net/profile/ajtazer', 'myanimelist.net/profile/ajtazer'],
+                    ['pgp', '/pgp/', 'encrypted mail →  /pgp/']
+                ];
+                rows.forEach(function (r) {
+                    print('<span class="cyan">' + r[0] + '</span>' + ' '.repeat(Math.max(1, 13 - r[0].length)) + LINK(r[1], r[2]));
+                });
+                print('<span class="cyan">email</span>' + ' '.repeat(8) + '<a class="plain" href="mailto:me@bihari.xyz">me@bihari.xyz</a>');
+            },
+            resume: function () { COMMANDS['sudo hire-me'](); },
+            'sudo hire-me': function () {
+                print("<span class='green'>[sudo] password for tazer:</span> <span class='dim'>••••••••</span>");
+                print("<span class='amber'>you don't need root for this. i'm open to work.</span>");
+                blank();
+                print("→ " + LINK('https://www.linkedin.com/in/tazer/', 'LinkedIn') + '  ·  ' + LINK('https://github.com/ajtazer', 'GitHub') + "  ·  <a class='plain' href='mailto:me@bihari.xyz'>me@bihari.xyz</a>");
+                print("<span class='dim'>security roles, bug bounty, PoC work — let's talk.</span>");
+            },
+            socials: function () { COMMANDS.contact(); },
+            ls: function () { COMMANDS.projects(); },
+            whoami: function () { print('tazer'); print("<span class='dim'>(try</span> <span class='cyan'>about</span><span class='dim'>)</span>"); },
+            banner: function () { print('<span class="ascii">' + ASCII + '</span>'); },
+            clear: function () { output.innerHTML = ''; },
+            matrix: function () {
+                var on = MATRIX.toggle();
+                print(on ? "<span class='green'>matrix: on.</span> <span class='dim'>run</span> <span class='cyan'>matrix</span> <span class='dim'>again to stop.</span>"
+                         : "<span class='dim'>matrix: off.</span>");
+            },
+            exit: function () { print("<span class='dim'>there is no escape from tazerOS. (but you can close the tab.)</span>"); },
+            sudo: function () { print("<span class='red'>tazer is not in the sudoers file. this incident has been reported.</span>"); }
+        };
+
+        var HELP_HINT = "<span class='dim'>type</span> <span class='cyan'>help</span> <span class='dim'>to see what i can do.</span>";
+
+        function run(raw) {
+            var input = (raw || '').trim();
+            // echo
+            var e = document.createElement('div');
+            e.className = 'line cmd-echo';
+            e.innerHTML = "<span class='prompt'>tazer@bihari</span><span class='sep'>:</span><span class='pink'>~</span><span class='sep'>$</span> " + esc(input);
+            output.appendChild(e);
+            if (!input) { scroll(); return; }
+
+            var lower = input.toLowerCase();
+            // easter eggs first
+            if (/^sudo\s+rm\s+-rf|^rm\s+-rf/.test(lower)) {
+                print("<span class='red'>rm: cannot remove '/': read-only container.</span>");
+                print("<span class='dim'>nice try though. and you're not root here. 🙂</span>");
+                scroll(); return;
+            }
+            if (lower === 'sudo hire-me' || lower === 'hire-me' || lower === 'hire me') { COMMANDS['sudo hire-me'](); scroll(); return; }
+
+            var name = lower.split(/\s+/)[0];
+            if (COMMANDS[name]) { COMMANDS[name](); }
+            else {
+                print("<span class='red'>command not found:</span> " + esc(name));
+                print(HELP_HINT);
+            }
+            scroll();
+        }
+
+        // ---------- history + input ----------
+        var history = [], hi = -1;
+        cmd.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Enter') {
+                var v = cmd.value;
+                if (v.trim()) { history.push(v); }
+                hi = history.length;
+                cmd.value = '';
+                run(v);
+            } else if (ev.key === 'ArrowUp') {
+                ev.preventDefault();
+                if (hi > 0) { hi--; cmd.value = history[hi] || ''; setTimeout(function(){cmd.setSelectionRange(cmd.value.length,cmd.value.length);},0); }
+            } else if (ev.key === 'ArrowDown') {
+                ev.preventDefault();
+                if (hi < history.length - 1) { hi++; cmd.value = history[hi] || ''; }
+                else { hi = history.length; cmd.value = ''; }
+            } else if (ev.key === 'Tab') {
+                ev.preventDefault();
+                var cur = cmd.value.trim().toLowerCase();
+                if (!cur) return;
+                var keys = Object.keys(COMMANDS).concat(['sudo hire-me']);
+                var m = keys.filter(function (k) { return k.indexOf(cur) === 0; });
+                if (m.length === 1) cmd.value = m[0];
+            } else if (ev.key === 'l' && ev.ctrlKey) {
+                ev.preventDefault(); COMMANDS.clear();
+            }
+        });
+
+        chips.addEventListener('click', function (ev) {
+            var b = ev.target.closest('.chip'); if (!b) return;
+            var c = b.getAttribute('data-cmd');
+            cmd.value = '';
+            run(c);
+            focusInput();
+        });
+
+        function focusInput() { if (window.innerWidth > 620) cmd.focus(); }
+        term.addEventListener('click', function (ev) { if (ev.target.tagName !== 'A') focusInput(); });
+
+        // ---------- matrix rain ----------
+        var MATRIX = (function () {
+            var c = document.getElementById('matrix'), ctx = c.getContext('2d');
+            var raf = null, drops = [], fontSize = 16, cols = 0, active = false;
+            var glyphs = 'アカサタナハマヤラワイキシチニヒミリヰウクスツヌフムユルグズヅブヅエケセテネヘメレヱオコソトノホモヨロヲ0123456789ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜｽﾂ'.split('');
+            function size() {
+                c.width = window.innerWidth; c.height = window.innerHeight;
+                cols = Math.floor(c.width / fontSize);
+                drops = []; for (var i = 0; i < cols; i++) drops[i] = Math.random() * -100;
+            }
+            function draw() {
+                ctx.fillStyle = 'rgba(5,7,10,0.09)';
+                ctx.fillRect(0, 0, c.width, c.height);
+                ctx.font = fontSize + 'px monospace';
+                for (var i = 0; i < drops.length; i++) {
+                    var ch = glyphs[Math.floor(Math.random() * glyphs.length)];
+                    var x = i * fontSize, y = drops[i] * fontSize;
+                    ctx.fillStyle = Math.random() > 0.975 ? '#7fdfff' : '#3ffb9a';
+                    ctx.fillText(ch, x, y);
+                    if (y > c.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i] += 0.55;
+                }
+                raf = requestAnimationFrame(draw);
+            }
+            return {
+                toggle: function () {
+                    active = !active;
+                    if (active) { size(); c.classList.add('on'); if (!raf) draw(); window.addEventListener('resize', size); }
+                    else { c.classList.remove('on'); if (raf) { cancelAnimationFrame(raf); raf = null; } window.removeEventListener('resize', size); ctx.clearRect(0,0,c.width,c.height); }
+                    return active;
+                }
+            };
+        })();
+
+        // ---------- sakura petals ----------
+        (function () {
+            if (reduce) return;
+            var host = document.getElementById('sakura');
+            var N = window.innerWidth < 620 ? 9 : 16;
+            for (var i = 0; i < N; i++) {
+                var p = document.createElement('div');
+                p.className = 'petal';
+                var dur = 7 + Math.random() * 9;
+                var size = 8 + Math.random() * 8;
+                p.style.left = (Math.random() * 100) + 'vw';
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.setProperty('--drift', (Math.random() * 180 - 40) + 'px');
+                p.style.animationDuration = dur + 's';
+                p.style.animationDelay = (-Math.random() * dur) + 's';
+                p.style.opacity = 0.45 + Math.random() * 0.4;
+                host.appendChild(p);
+            }
+        })();
+
+        // ---------- boot ----------
+        var boot = [
+            "<span class='dim'>[    0.000000] tazerOS 6.9.0-phosphor (weeb edition) booting...</span>",
+            "<span class='dim'>[    0.041273] CPU: caffeine x8 @ turbo · RAM: never enough</span>",
+            "<span class='dim'>[    0.088914] loading modules:</span> <span class='cyan'>burpsuite zaproxy ghidra ffmpeg</span>",
+            "<span class='dim'>[    0.132400] mounting /home/tazer ...</span> <span class='green'>ok</span>",
+            "<span class='dim'>[    0.170882] starship prompt ...</span> <span class='green'>ok</span>",
+            "<span class='dim'>[    0.201337] modprobe kawaii.ko ...</span> <span class='green'>ok</span>",
+            "<span class='dim'>[    0.210551] enabling anime subsystem (アニメ) ...</span> <span class='amber'>(this may take a while)</span>",
+            "<span class='dim'>[    0.512119] anime subsystem online. MAL synced.</span> <span class='green'>ok</span>",
+            "<span class='dim'>[    0.533218] sakura petals: falling</span> <span class='sakura'>🌸 ok</span>",
+            "<span class='dim'>[    0.548003] network: bihari.xyz</span> <span class='green'>up</span>",
+            "<span class='dim'>[    0.590744] reticulating splines ...</span> <span class='green'>done</span>",
+            "<span class='green'>[    0.640210] おかえり、tazer。 welcome home.</span>"
+        ];
+
+        var skipped = false;
+        function finishBoot() {
+            if (skipped) return; skipped = true;
+            output.innerHTML = '';
+            COMMANDS.neofetch();
+            blank();
+            print("<span class='dim'>interactive terminal portfolio.</span> " + HELP_HINT);
+            print("<span class='dim'>can't be bothered to type? tap a chip below. try</span> <span class='pink'>sudo hire-me</span><span class='dim'>.</span>");
+            blank();
+            inputline.style.display = 'flex';
+            focusInput();
+            scroll();
+        }
+
+        document.addEventListener('keydown', function once() { if (!skipped && output.children.length) { document.removeEventListener('keydown', once); } });
+
+        if (reduce) {
+            boot.forEach(function (l) { print(l); });
+            setTimeout(finishBoot, 120);
+        } else {
+            var i = 0;
+            (function step() {
+                if (skipped) return;
+                if (i < boot.length) { print(boot[i]); i++; setTimeout(step, 78 + Math.random() * 55); }
+                else { setTimeout(finishBoot, 320); }
+            })();
+            // skip on interaction
+            var skip = function () { if (i < boot.length) { for (; i < boot.length; i++) print(boot[i]); finishBoot(); } };
+            window.addEventListener('keydown', skip, { once: true });
+            term.addEventListener('click', skip, { once: true });
+        }
+    })();
+    </script>
 </body>
 
 </html>
