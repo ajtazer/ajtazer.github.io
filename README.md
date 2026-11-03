@@ -1,6 +1,6 @@
-# [ajtazer.github.io](https://ajtazer.github.io)
+# [ajtazer.github.io](https://bihari.xyz)
 
-Personal personal launchpad for projects and experiments.
+Personal launchpad for projects and experiments.
 
 ## Design
 - **Minimalist**: Single screen, centered layout.
