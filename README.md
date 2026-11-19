@@ -1,16 +1,12 @@
-# [ajtazer.github.io](https://ajtazer.github.io)
+# [bihari.xyz](https://bihari.xyz)
 
-Personal personal launchpad for projects and experiments.
+**tazerOS** — an interactive terminal portfolio. Type `help`, or tap a chip.
 
-## Design
-- **Minimalist**: Single screen, centered layout.
-- **Dark Theme**: Focused on readability and aesthetics.
-- **Mobile First**: Touch-friendly large action buttons.
+Security research, CVEs, PoCs, and a pile of small tools. Plus anime.
 
-## Tech
-- Pure HTML5
-- CSS3 (Vanilla)
-- Deployed via GitHub Actions
+- Single `index.html`, no build, no deps (just JetBrains Mono from Google Fonts)
+- `/pgp/` — PGP key for encrypted mail / disclosures
+- Deployed to GitHub Pages via Actions on push to `main`
 
 ---
 Built with <3 by TAZER
