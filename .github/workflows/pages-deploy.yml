@@ -9,6 +9,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  # Daily rebuild so card "updated" times and new tagged repos stay fresh
+  schedule:
+    - cron: "0 3 * * *"
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
@@ -31,6 +35,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Fetch repo data for project cards
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate 'users/${{ github.repository_owner }}/repos?per_page=100' \
+            | jq -s 'add | map({name, description, homepage, html_url, pushed_at, topics})' > repos.json
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
